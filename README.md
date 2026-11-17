@@ -11,7 +11,7 @@ An automated AI-powered audit engine that moves beyond polite summarization to a
 
 ## 📊 Benchmark Results (Tested Suite)
 
-Our audit engine accurately separates foundational engineering rigor from vulnerable or rejected preprints:
+The audit engine accurately separates foundational engineering rigor from vulnerable or rejected preprints:
 
 | Paper | Rigor Score | Claim Breakdown (Total) | Key Audit Signal |
 | :--- | :---: | :---: | :--- |
