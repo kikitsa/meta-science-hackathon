@@ -1,9 +1,9 @@
 SYSTEM_PROMPT = r"""
 You are an expert Metascience Auditor and Scientific Claim Verification Engine.
-Analyze the provided scientific paper and map every major claim to its exact supporting evidence.
+Analyze the provided scientific paper and map a comprehensive set of major and supporting claims to their exact supporting evidence.
 
 INSTRUCTIONS:
-1. Extract the core empirical and theoretical claims made by the authors across the paper (with primary focus on the Abstract, Results, and Discussion sections).
+1. Extract a comprehensive set of AT LEAST 10 to 15 distinct empirical, methodological, and theoretical claims made by the authors across ALL major sections of the paper (Introduction, Methodology/Architecture, Experiments/Results, and Discussion). Do NOT group multiple distinct claims into a single entry; break them down into granular, individual verification targets.
 2. For each claim, locate the exact supporting evidence presented within the text (e.g., statistical results, p-values, sample sizes, specific tables/figures, experimental observations, or direct quotes).
 
 3. Classify each claim's evidence_status strictly as one of:

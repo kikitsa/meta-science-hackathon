@@ -1,5 +1,6 @@
 import json
 import os
+import time
 
 import pymupdf
 from openai import OpenAI
@@ -9,7 +10,10 @@ from system_prompt import SYSTEM_PROMPT
 
 # PAPERS
 HIGH_RIGOR_SCORE_PAPER = "data/attentionIsAllYouNeed.pdf"
-LOW_RIGOR_SCORE_PAPER = "data/4821_a_simple_training_free_method_.pdf"
+LOW_RIGOR_SCORE_PAPER_1 = "data/4821_a_simple_training_free_method_.pdf"
+LOW_RIGOR_SCORE_PAPER_2 = "data/6745_Learning_Deliberately_Act.pdf"
+LOW_RIGOR_SCORE_PAPER_3 = "data/18694_Mechanistic_Interpretabi.pdf"
+
 
 client = OpenAI(
     api_key=os.environ.get("BERGET_API_KEY"),
@@ -56,7 +60,7 @@ def audit_paper(pdf_path: str):
 
     # Step B: Call Berget AI API
     response = client.chat.completions.create(
-        model="openai/gpt-oss-120b",
+        model="google/gemma-4-31B-it",
         messages=[
             {"role": "system", "content": SYSTEM_PROMPT},
             {
@@ -72,8 +76,11 @@ def audit_paper(pdf_path: str):
 
 
 if __name__ == "__main__":
+    start_time = time.time()
     try:
-        audit_json_str = audit_paper(HIGH_RIGOR_SCORE_PAPER)
+        api_start = time.time()
+        audit_json_str = audit_paper(LOW_RIGOR_SCORE_PAPER_2)
+        api_duration = time.time() - api_start
 
         # Clean potential markdown wrappers and parse
         clean_json_str = (
@@ -84,8 +91,12 @@ if __name__ == "__main__":
         # Generate the PDF report
         generate_audit_pdf(parsed_json, "final_audit_report.pdf")
 
-        print("\n--- AUDIT REPORT SUCCESS ---")
-        print(json.dumps(parsed_json, indent=2))
+        total_duration = time.time() - start_time
 
+        print("\n--- AUDIT REPORT SUCCESS ---")
+        print(f"Total claims extracted: {len(parsed_json.get('claims', []))}")
+        print(f"Overall Rigor Score: {parsed_json.get('overall_rigor_score')}/10")
+        print(f"⏱️ API Call Latency: {api_duration:.2f} seconds")
+        print(f"⏱️ Total Pipeline Duration: {total_duration:.2f} seconds")
     except Exception as e:
         print(f"Error during audit: {e}")
