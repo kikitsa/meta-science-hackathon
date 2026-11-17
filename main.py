@@ -4,6 +4,7 @@ import os
 import pymupdf
 from openai import OpenAI
 
+from pdf_report import generate_audit_pdf
 from system_prompt import SYSTEM_PROMPT
 
 # PAPERS
@@ -74,8 +75,15 @@ if __name__ == "__main__":
     try:
         audit_json_str = audit_paper(HIGH_RIGOR_SCORE_PAPER)
 
-        # Pretty print the resulting JSON
-        parsed_json = json.loads(audit_json_str)
+        # Clean potential markdown wrappers and parse
+        clean_json_str = (
+            audit_json_str.strip().removeprefix("```json").removesuffix("```").strip()
+        )
+        parsed_json = json.loads(clean_json_str)
+
+        # Generate the PDF report
+        generate_audit_pdf(parsed_json, "final_audit_report.pdf")
+
         print("\n--- AUDIT REPORT SUCCESS ---")
         print(json.dumps(parsed_json, indent=2))
 
