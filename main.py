@@ -1,6 +1,7 @@
 import json
 import os
 import time
+from pathlib import Path
 
 import pymupdf
 from openai import OpenAI
@@ -76,10 +77,12 @@ def audit_paper(pdf_path: str):
 
 
 if __name__ == "__main__":
+    TARGET_PAPER = LOW_RIGOR_SCORE_PAPER_3
+    print(f"Starting audit on: {TARGET_PAPER}")
     start_time = time.time()
     try:
         api_start = time.time()
-        audit_json_str = audit_paper(LOW_RIGOR_SCORE_PAPER_2)
+        audit_json_str = audit_paper(TARGET_PAPER)
         api_duration = time.time() - api_start
 
         # Clean potential markdown wrappers and parse
@@ -88,14 +91,19 @@ if __name__ == "__main__":
         )
         parsed_json = json.loads(clean_json_str)
 
+        # Dynamically create output filename based on input filename
+        input_path = Path(TARGET_PAPER)
+        output_filename = f"{input_path.stem}_audit_report.pdf"
+
         # Generate the PDF report
-        generate_audit_pdf(parsed_json, "final_audit_report.pdf")
+        generate_audit_pdf(parsed_json, output_filename)
 
         total_duration = time.time() - start_time
 
         print("\n--- AUDIT REPORT SUCCESS ---")
         print(f"Total claims extracted: {len(parsed_json.get('claims', []))}")
         print(f"Overall Rigor Score: {parsed_json.get('overall_rigor_score')}/10")
+        print(f"📁 Report saved to: {output_filename}")
         print(f"⏱️ API Call Latency: {api_duration:.2f} seconds")
         print(f"⏱️ Total Pipeline Duration: {total_duration:.2f} seconds")
     except Exception as e:
